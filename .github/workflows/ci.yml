@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: API tests + audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - name: Dependency audit (production deps, high severity and above)
+        run: npm audit --omit=dev --audit-level=high
+
+  e2e:
+    name: Browser end-to-end
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: System packages (ffmpeg generates the local test clip)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: npm ci
+        working-directory: server
+      - run: npm ci
+        working-directory: e2e
+      - run: npx playwright install --with-deps chromium
+        working-directory: e2e
+      - run: npm test
+        working-directory: e2e
+        env:
+          E2E_OUT: ${{ github.workspace }}/e2e/screenshots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-screenshots
+          path: e2e/screenshots/*.png
+          if-no-files-found: ignore
+
+  docker:
+    name: Docker image builds
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t movieon:ci .
+      - name: Container health check
+        run: |
+          docker run -d --name mo -p 3000:3000 \
+            -e JWT_SECRET=ci-secret -e ADMIN_EMAIL=ci@example.com -e ADMIN_PASSWORD=ci-password-123 \
+            movieon:ci
+          for i in $(seq 1 20); do
+            curl -fsS http://127.0.0.1:3000/api/health && exit 0
+            sleep 1
+          done
+          docker logs mo
+          exit 1

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MovieOn — movies, series &amp; anime</title>
+  <meta name="description" content="MovieOn: movies, series and anime — free to watch or unlock more with Silver, Gold and Diamond.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">Skip to content</a>
+
+  <div class="route-bar" aria-hidden="true"><i></i></div>
+
+  <header class="site-header" id="header">
+    <div class="header-inner">
+      <a class="brand" href="#/" aria-label="MovieOn home">
+        <span class="wordmark">MOVIE<b>ON</b></span>
+      </a>
+      <nav class="main-nav" aria-label="Main">
+        <a href="#/" data-nav="home">Home</a>
+        <a href="#/browse?tier=free" data-nav="free">Free</a>
+        <a href="#/browse?type=movie" data-nav="movie">Movies</a>
+        <a href="#/browse?type=series" data-nav="series">Series</a>
+        <a href="#/browse?type=anime" data-nav="anime">Anime</a>
+        <a href="#/watchlist" data-nav="watchlist">My List</a>
+        <a href="#/plans" data-nav="plans">Plans</a>
+        <a href="#/admin" data-nav="admin" id="admin-link" hidden>Admin</a>
+      </nav>
+      <form class="search" role="search" id="search-form">
+        <label class="sr-only" for="search-input">Search titles</label>
+        <input id="search-input" type="search" name="q" placeholder="Search…" autocomplete="off" maxlength="100">
+        <button type="submit" class="icon-btn" aria-label="Search">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm9 16-4-4"/></svg>
+        </button>
+      </form>
+      <div class="header-actions">
+        <div id="account"></div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="site-footer">
+    <p>© MovieOn. Stream only what you have the rights to watch.</p>
+    <p class="muted">Demo catalog: Blender Foundation open movies (CC-BY) plus fictional placeholder titles.</p>
+  </footer>
+
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

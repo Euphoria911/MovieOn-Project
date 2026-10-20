@@ -1,0 +1,23 @@
+services:
+  movieon:
+    build: .
+    image: movieon:1.1.0
+    ports:
+      - "3000:3000"
+    environment:
+      # Required (compose refuses to start without them). Put them in a .env file — see .env.example.
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env (e.g. openssl rand -hex 32)}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?Set ADMIN_EMAIL in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+      # Optional
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}   # set true when served over HTTPS
+      SEED_DEMO: ${SEED_DEMO:-true}            # false = start with an empty catalog
+      MEDIA_ORIGINS: ${MEDIA_ORIGINS:-}        # comma-separated allow-list for video hosts (CSP)
+      TRUST_PROXY: ${TRUST_PROXY:-}            # e.g. 1 when behind one reverse proxy
+      BILLING_PROVIDER: ${BILLING_PROVIDER:-none}  # none = checkout disabled; mock = demo checkout (no real money)
+    volumes:
+      - movieon-data:/data
+    restart: unless-stopped
+
+volumes:
+  movieon-data:
